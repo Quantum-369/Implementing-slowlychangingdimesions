@@ -1,0 +1,40 @@
+sqoop-job --create loadcustomers -- import \
+  --connect jdbc:mysql://aw-scd.cdnugfjpq15f.us-east-1.rds.amazonaws.com/adventureworks --username admin \
+  --password-file /user/hadoop/sqoop-password-file \
+  --table v_customer  --as-parquetfile \
+  --target-dir /user/hadoop/output/stores/stage/customers \
+  --append \
+  --split-by CustomerID --num-mappers 1 \
+  --check-column ModifiedDate --incremental lastmodified
+
+
+sqoop-job --create loadsalesorderheader -- import \
+  --connect jdbc:mysql://aw-scd.cdnugfjpq15f.us-east-1.rds.amazonaws.com/adventureworks --username admin \
+  --password-file /user/hadoop/sqoop-password-file \
+  --table v_salesorderheader --as-parquetfile \
+  --target-dir /user/hadoop/output/stores/stage/salesorderheader \
+  --split-by SalesOrderID --num-mappers 1 \
+  --check-column SalesOrderID --incremental append
+
+sqoop-job --create loadsalesorderdetail -- import \
+  --connect jdbc:mysql://aw-scd.cdnugfjpq15f.us-east-1.rds.amazonaws.com/adventureworks --username admin \
+   --password-file /user/hadoop/sqoop-password-file \
+  --table v_salesorderdetails --as-parquetfile \
+  --target-dir /user/hadoop/output/stores/stage/salesorderdetails \
+  --split-by SalesOrderDetailID --num-mappers 1 \
+  --check-column SalesOrderDetailID --incremental append
+
+sqoop-job --create loadproducts -- import \
+  --connect jdbc:mysql://aw-scd.cdnugfjpq15f.us-east-1.rds.amazonaws.com/adventureworks --username admin \
+ --password-file /user/hadoop/sqoop-password-file \
+  --table v_product --as-parquetfile --append \
+  --target-dir /user/hadoop/output/stores/stage/products \
+  --split-by productId --num-mappers 1 \
+  --check-column modifieddate --incremental lastmodified
+
+sqoop job --create loadcreditcard -- import \
+  --connect jdbc:mysql://aw-scd.cdnugfjpq15f.us-east-1.rds.amazonaws.com/adventureworks --username admin \
+  --password-file /user/hadoop/sqoop-password-file \
+  --table creditcard --as-parquetfile \
+  --target-dir /user/hadoop/output/stores/stage/creditcard \
+  --num-mappers 1 --check-column ModifiedDate --append --incremental lastmodified

@@ -1,0 +1,29 @@
+scp -i momo.cer implement\ scd/AWBackup.sql hadoop@ec2-44-223-3-105.compute-1.amazonaws.com:/home/hadoop/
+
+mysql -h aw-scd.cdnugfjpq15f.us-east-1.rds.amazonaws.com -u admin -p < AWBackup.sql
+
+
+
+ssh -i momo.cer hadoop@ec2-44-223-3-105.compute-1.amazonaws.com
+
+
+
+sudo wget https://downloads.mysql.com/archives/get/p/3/file/mysql-connector-j-8.0.33.tar.gz
+tar -xvzf mysql-connector-j-8.0.33.tar.gz
+cd mysql-connector-j-8.0.33/
+sudo cp  mysql-connector-j-8.0.33.jar /usr/lib/sqoop/lib/
+
+echo -n <password_in_double_quotes> | hdfs dfs -put - /user/hadoop/sqoop-password-file
+
+hdfs dfs -ls - /user/hadoop/sqoop-password-file
+
+sqoop job --list
+sqoop job --exec loadcustomers
+
+beeline -u 'jdbc:hive2://localhost:10000'
+
+SHOW TABLES;
+DESCRIBE FORMATTED product;  -- Do this for each table to check the schema and location
+
+spark-shell --conf "spark.sql.catalogImplementation=hive"
+
